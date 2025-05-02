@@ -687,7 +687,7 @@ html{
         bottom: 10% !important;
     }
     .hide{
-        display: none !important;
+        opacity: 0 !important;
     }
 
 }
