@@ -686,6 +686,9 @@ html{
     .carge{
         bottom: 10% !important;
     }
+    .hide{
+        display: none !important;
+    }
 
 }
 
