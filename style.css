@@ -682,6 +682,9 @@ html{
     .whiteGlow{
         font-size: 1rem !important;
     }
+      .carge{
+        bottom: 10% !important;
+    }
 
 }
 
