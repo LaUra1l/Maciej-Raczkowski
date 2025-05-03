@@ -1,123 +1,101 @@
-class IconAnimate{
+class IconAnimate {
     #numberOfIcons;
     #icon_className;
     #iconColor_table;
     #contener;
     #animation;
-    constructor(numberOfIcons,icon_className,iconColor_table,contener,animation
-    ){
-        this.#numberOfIcons=numberOfIcons;
-        this.#icon_className=icon_className;
-        this.#iconColor_table=iconColor_table
-        this.#contener=contener;
-        this.#animation=animation
-    
-    }
-    #getElement(elementClass){
-        const element=document.querySelector(elementClass);
-        return element;
 
+    constructor(numberOfIcons, icon_className, iconColor_table, contener, animation) {
+        this.#numberOfIcons = numberOfIcons;
+        this.#icon_className = icon_className;
+        this.#iconColor_table = iconColor_table;
+        this.#contener = contener;
+        this.#animation = animation;
     }
-    #randomNumber(max,min){
-        const random=Math.floor(Math.random()*(max-min)+min);
-        return random;
+
+    #getElement(elementClass) {
+        return document.querySelector(elementClass);
     }
-    #randomColor(colors_table){
-        const index=this.#randomNumber(colors_table.length,0);
+
+    #randomNumber(max, min) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    #randomColor(colors_table) {
+        const index = this.#randomNumber(colors_table.length, 0);
         return colors_table[index];
     }
-    #randomTranslateY(){
-        return this.#randomNumber(60,0)+"px";
+
+    #randomTranslateY() {
+        return this.#randomNumber(60, 0) + "px";
     }
-    #randomSize(){
-        return this.#randomNumber(50,5)+"px";
+
+    #randomSize() {
+        return this.#randomNumber(50, 5); // Zwraca liczbę (nie px), by użyć jej w obliczeniach
     }
-    #randomPositions() {
-        const container = this.#getElement(this.#contener);
-        const bounds = container.getBoundingClientRect();
-    
-        const x = this.#randomNumber(bounds.width, 0) + "px";
-        const y = this.#randomNumber(bounds.height, 0) + "px";
-        return [x, y];
-    }
-    #randomOpacity(){
+
+    #randomOpacity() {
         return Math.random();
     }
+
     #getScreenWidth() {
         return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     }
-    #generateIcons(number,className){
-        const contener=this.#getElement(this.#contener);
 
-        const device_width=this.#getScreenWidth();
+    #randomPositions(container, iconWidth, iconHeight) {
+        const bounds = container.getBoundingClientRect();
+        const maxX = bounds.width - iconWidth;
+        const maxY = bounds.height - iconHeight;
 
-        if(device_width<400){
-            number=number/2 - 5;
+        const x = this.#randomNumber(maxX, 0) + "px";
+        const y = this.#randomNumber(maxY, 0) + "px";
 
+        return [x, y];
+    }
+
+    #generateIcons(number, className) {
+        const container = this.#getElement(this.#contener);
+        const device_width = this.#getScreenWidth();
+
+        if (device_width < 400) {
+            number = number - 7;
+        } else if (device_width < 500) {
+            number = number - 3;
         }
-        else if(device_width<500){
-            number=number-8;
-        }
 
-        for(let i=0;i<number;i++){
-            const icon=document.createElement('li');
-            icon.style.opacity="0";
-            icon.className=className;
-            icon.style.position="absolute";
-            icon.style.transition="all 2s";
-            icon.style.color=this.#randomColor(this.#iconColor_table);
-    
-            // dodanie animacji
-            
-            icon.addEventListener("mouseenter",()=>{
-                
-                icon.style.animation=this.#animation;
-               
-            })
+        for (let i = 0; i < number; i++) {
+            const icon = document.createElement('li');
+            icon.style.opacity = "0";
+            icon.className = className;
+            icon.style.position = "absolute";
+            icon.style.transition = "all 2s";
+            icon.style.color = this.#randomColor(this.#iconColor_table);
 
-            
-            
-            icon.style.fontSize=this.#randomSize();
-            
+            icon.addEventListener("mouseenter", () => {
+                icon.style.animation = this.#animation;
+            });
 
-            // Płynne pojawienie
-            
-            setTimeout(()=>{
-                icon.style.opacity=this.#randomOpacity();
-                icon.style.transform=`translateY(${this.#randomTranslateY()})`;
-     
-            },100)
+            const fontSize = this.#randomSize(); // liczba
+            icon.style.fontSize = fontSize + "px";
 
-            // POZYCJA
-            const positions=this.#randomPositions();
-            icon.style.left=positions[0];
-            icon.style.top=positions[1];
+            // Dopiero teraz pozycja - z uwzględnieniem rozmiaru
+            const [x, y] = this.#randomPositions(container, fontSize, fontSize);
+            icon.style.left = x;
+            icon.style.top = y;
 
-            contener.appendChild(icon);
+            setTimeout(() => {
+                icon.style.opacity = this.#randomOpacity();
+                icon.style.transform = `translateY(${this.#randomTranslateY()})`;
+            }, 100);
 
-            
-
+            container.appendChild(icon);
         }
     }
 
-    start(){
-        this.#generateIcons(this.#numberOfIcons,this.#icon_className);
-
+    start() {
+        this.#generateIcons(this.#numberOfIcons, this.#icon_className);
     }
 }
-
-const shadesOfBlack=[
-    '#000000', // pure black
-    '#0A0A0A', // very dark gray
-    '#141414', // very dark gray
-    '#1E1E1E', // very dark gray
-    '#282828', // very dark gray
-    '#323232', // very dark gray
-    '#3C3C3C', // very dark gray
-    '#464646'  // very dark gray
-];
-
-
 
 
 
@@ -305,28 +283,6 @@ class IconInteraction{
    
 }
 
-function revealOnScroll() {
-    const reveals = document.querySelectorAll('.reveal');
-
-    reveals.forEach(element => {
-        const windowHeight = window.innerHeight;
-        const elementTop = element.getBoundingClientRect().top;
-        const elementBottom = element.getBoundingClientRect().bottom;
-        const revealPoint = 100;
-
-        if (elementTop < windowHeight - revealPoint && elementBottom > 0) {
-            element.classList.add('active');
-        } else {
-            element.classList.remove('active');
-        }
-    });
-}
-
-
-
-
-
-
 class VideoSlider {
     constructor(containerSelector) {
       this.container = document.querySelector(containerSelector);
@@ -353,9 +309,13 @@ class VideoSlider {
       this.slider.addEventListener('mouseup', () => this.endDrag());
       this.slider.addEventListener('mouseleave', () => this.endDrag());
   
-      this.slider.addEventListener('touchstart', (e) => this.startDrag(e.touches[0]));
-      this.slider.addEventListener('touchmove', (e) => this.onDrag(e.touches[0]));
+      this.slider.addEventListener('touchstart', (e) => this.startDrag(e.touches[0]), { passive: false });
+      this.slider.addEventListener('touchmove', (e) => {
+        e.preventDefault(); // Zapobiega przewijaniu strony
+        this.onDrag(e.touches[0]);
+      }, { passive: false });
       this.slider.addEventListener('touchend', () => this.endDrag());
+      
     }
   
     setupVideos() {
@@ -429,17 +389,39 @@ class VideoSlider {
           }
         });
       }
-  }
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    new VideoSlider('.video-slider-container');
-  });
+}
 
+function revealOnScroll() {
+    const reveals = document.querySelectorAll('.reveal');
+
+    reveals.forEach(element => {
+        const windowHeight = window.innerHeight;
+        const elementTop = element.getBoundingClientRect().top;
+        const elementBottom = element.getBoundingClientRect().bottom;
+        const revealPoint = 100;
+
+        if (elementTop < windowHeight - revealPoint && elementBottom > 0) {
+            element.classList.add('active');
+        } else {
+            element.classList.remove('active');
+        }
+    });
+}
+const shadesOfBlack=[
+    '#000000', // pure black
+    '#0A0A0A', // very dark gray
+    '#141414', // very dark gray
+    '#1E1E1E', // very dark gray
+    '#282828', // very dark gray
+    '#323232', // very dark gray
+    '#3C3C3C', // very dark gray
+    '#464646'  // very dark gray
+];
 
 document.addEventListener('DOMContentLoaded',()=>{
 
 
-
+    new VideoSlider('.video-slider-container');
     window.addEventListener('scroll', revealOnScroll);
     window.addEventListener('load', revealOnScroll);
 
@@ -447,13 +429,14 @@ document.addEventListener('DOMContentLoaded',()=>{
     const navBar=new IconInteraction();
     navBar.addClassName('navBar','.navList','click','fa-solid fa-bars navBar','fa-solid fa-xmark navBar','210px');
 
-    const notes1= new IconAnimate(20,"fa-solid fa-music note",shadesOfBlack,"#main","noteFall 2s both");
-
-    notes1.start();
-
-    const notes2= new IconAnimate(10,"fa-solid fa-music note",shadesOfBlack,"#about","noteFall 2s both");
-
-    notes2.start();
+    window.onload = () => {
+        const notes1 = new IconAnimate(15, "fa-solid fa-music note", shadesOfBlack, "#main", "noteFall 2s both");
+        notes1.start();
+    
+        const notes2 = new IconAnimate(10, "fa-solid fa-music note", shadesOfBlack, "#about", "noteFall 2s both");
+        notes2.start();
+    };
+    
 
 
 
